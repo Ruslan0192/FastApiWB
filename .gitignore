@@ -1,5 +1,0 @@
-/venv/
-.gitignore
-.env
-test_main.http
-fullstat_advcom_api_v2.py
