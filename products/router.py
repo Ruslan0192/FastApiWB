@@ -3,7 +3,7 @@ import json
 from fastapi import APIRouter
 
 from general.router import def_requests_get
-from products.schemas import SLocaleModel, SObjectGet, SCharacteristicsGet, STnvedGet
+from products.schemas import *
 
 router_products = APIRouter(prefix='/products', tags=['Работа с товарами'])
 
@@ -25,7 +25,7 @@ async def def_parent(params_locale: SLocaleModel):
 # Например, у категории Игрушки будут предметы Калейдоскопы, Куклы, Мячики.
 # работает не корректно
 @router_products.post("/object")
-async def def_object(params_object: SObjectGet):
+async def def_object(param_post: SObjectPost):
     """
     {
       "name": "Калейдоскопы",
@@ -36,68 +36,68 @@ async def def_object(params_object: SObjectGet):
     }
     """
     url_api = 'https://content-api.wildberries.ru/content/v2/object/all'
-    params = params_object.json()
+    params = param_post.json()
     return def_requests_get(url_api, params)
 
 
 # Метод предоставляет параметры характеристик предмета: названия, типы данных, единицы измерения и так далее.
 # В запросе необходимо указать ID предмета.
 @router_products.post("/charcs")
-async def def_charcs(params_characteristics: SCharacteristicsGet):
+async def def_charcs(param_post: SCharacteristicsPost):
     """
     {
       "locale": "ru",
       "subjectId": 105
     }
     """
-    url_api = f'https://content-api.wildberries.ru/content/v2/object/charcs/{params_characteristics.subjectID}'
-    params = {'locale': params_characteristics.locale}
+    url_api = f'https://content-api.wildberries.ru/content/v2/object/charcs/{param_post.subjectID}'
+    params = {'locale': param_post.locale}
     return def_requests_get(url_api, params)
 
 
 # Метод предоставляет возможные значения характеристики предмета Цвет
 @router_products.post("/colors")
-async def def_colors(params_locale: SLocaleModel):
+async def def_colors(param_post: SLocaleModel):
     url_api = 'https://content-api.wildberries.ru/content/v2/directory/colors'
-    params = {"locale": params_locale.locale}
+    params = {"locale": param_post.locale}
     return def_requests_get(url_api, params)
 
 
 # Метод предоставляет возможные значения характеристики предмета Пол.
 @router_products.post("/kinds")
-async def def_kinds(params_locale: SLocaleModel):
+async def def_kinds(param_post: SLocaleModel):
     url_api = 'https://content-api.wildberries.ru/content/v2/directory/kinds'
-    params = {"locale": params_locale.locale}
+    params = {"locale": param_post.locale}
     return def_requests_get(url_api, params)
 
 
 # Метод предоставляет возможные значения характеристики предмета Страна производства.
 @router_products.post("/countries")
-async def def_countries(params_locale: SLocaleModel):
+async def def_countries(param_post: SLocaleModel):
     url_api = 'https://content-api.wildberries.ru/content/v2/directory/countries'
-    params = {"locale": params_locale.locale}
+    params = {"locale": param_post.locale}
     return def_requests_get(url_api, params)
 
 
 # Метод предоставляет возможные значения характеристики предмета Сезон.
 @router_products.post("/seasons")
-async def def_seasons(params_locale: SLocaleModel):
+async def def_seasons(param_post: SLocaleModel):
     url_api = 'https://content-api.wildberries.ru/content/v2/directory/seasons'
-    params = {"locale": params_locale.locale}
+    params = {"locale": param_post.locale}
     return def_requests_get(url_api, params)
 
 
 # Метод предоставляет возможные значения характеристики предмета Ставка НДС.
 @router_products.post("/vat")
-async def def_vat(params_locale: SLocaleModel):
+async def def_vat(param_post: SLocaleModel):
     url_api = 'https://content-api.wildberries.ru/content/v2/directory/vat'
-    params = {"locale": params_locale.locale}
+    params = {"locale": param_post.locale}
     return def_requests_get(url_api, params)
 
 
 # Метод предоставляет список ТНВЭД-кодов по ID предмета и фрагменту ТНВЭД-кода.
 @router_products.post("/tnved")
-async def def_tnved(params_tnved: STnvedGet):
+async def def_tnved(param_post: STnvedPost):
     """
     {
       "subjectID": 105,
@@ -105,10 +105,10 @@ async def def_tnved(params_tnved: STnvedGet):
       "locale": "ru"
     }
     """
-    params_json = params_tnved.json()
+    url_api = f'https://content-api.wildberries.ru/content/v2/directory/tnved'
+    params_json = param_post.json()
     params = json.loads(params_json)
     if not params['search']:
         del params['search']
-    url_api = f'https://content-api.wildberries.ru/content/v2/directory/tnved'
     return def_requests_get(url_api, params)
 
